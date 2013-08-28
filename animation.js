@@ -14,11 +14,34 @@ Animation.prototype = {
 
 	addKeyframe: function(time, properties) {
 		for(var i in properties) {
-			if(this.prop[time] === undefined) this.prop[time] = new Object();
-			// var data = JSON.parse(properties);
+			if(this.prop[time] === undefined) 
+				this.prop[time] = new Object();
+
 			for(var key in properties) {
 				this.prop[time][key] = properties[key];
-				this.times.push(time);	// TODO sort insert
+
+				// binary search for inserting time
+				var left = 0, 
+					right = this.times.length-1,
+					mid = Math.floor((this.times.length-1)/2);
+				var insert = true;
+				while(right >= left) {
+					mid = left + Math.floor((right-left)/2);
+					var elm = this.times[mid];
+					if(time > elm) {
+						left = mid+1;
+					}
+					else if(time < elm) {
+						right = mid-1;
+					}
+					else {
+						// value already exists
+						insert = false;
+						break;
+					}
+				}
+				if(insert)
+					this.times.splice(Math.max(0,right<mid?mid:left), 0, time);			
 			}
 		}
 	},
